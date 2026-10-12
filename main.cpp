@@ -1,132 +1,102 @@
-#include <iostream>
+#include <cstdio>
+#include <cstdlib>
 
 // Node structure for singly circular linked list
 struct Node {
     int data;
-    Node* next;
+    struct Node* next;
 };
 
-class CircularLinkedList {
-private:
-    Node* head;
-    int size;
+// Function to create a new node
+struct Node* createNode(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->next = nullptr;
+    return newNode;
+}
+
+// Function to insert a node at the end of circular linked list
+void insert(struct Node** head, int value, int* size) {
+    struct Node* newNode = createNode(value);
     
-public:
-    CircularLinkedList() : head(nullptr), size(0) {}
-    
-    ~CircularLinkedList() {
-        if (head == nullptr) return;
-        
-        Node* current = head;
-        Node* next;
-        
-        // Break the circular link to avoid infinite loop
-        do {
-            next = current->next;
-            delete current;
-            current = next;
-        } while (current != head);
-    }
-    
-    // Insert a new node at the end of the list
-    void insert(int value) {
-        Node* newNode = new Node;
-        newNode->data = value;
-        newNode->next = nullptr;
-        
-        if (head == nullptr) {
-            head = newNode;
-            newNode->next = head; // Point to itself to make it circular
-        } else {
-            Node* current = head;
-            // Find the last node (the one whose next points to head)
-            while (current->next != head) {
-                current = current->next;
-            }
-            current->next = newNode;
-            newNode->next = head;
-        }
-        size++;
-    }
-    
-    // Remove the m-th node starting from current position
-    // Returns the value of the removed node
-    int removeAndReturn(int m, Node*& current) {
-        if (size == 0) return -1;
-        if (size == 1) {
-            int value = head->data;
-            delete head;
-            head = nullptr;
-            current = nullptr;
-            size = 0;
-            return value;
-        }
-        
-        // Move to the node before the one to be deleted
-        // We need to move (m-1) steps from current
-        for (int i = 1; i < m; i++) {
+    if (*head == nullptr) {
+        *head = newNode;
+        newNode->next = *head; // Point to itself to make it circular
+    } else {
+        struct Node* current = *head;
+        // Find the last node (the one whose next points to head)
+        while (current->next != *head) {
             current = current->next;
         }
-        
-        // Now current points to the node to be deleted
-        Node* toDelete = current;
-        Node* prev = current;
-        
-        // Find the previous node
-        while (prev->next != toDelete) {
-            prev = prev->next;
-        }
-        
-        // Remove the node
-        prev->next = toDelete->next;
-        
-        // Update head if we're deleting it
-        if (toDelete == head) {
-            head = toDelete->next;
-        }
-        
-        // Set current to the next node after the deleted one
-        current = toDelete->next;
-        
-        int value = toDelete->data;
-        delete toDelete;
-        size--;
-        
+        current->next = newNode;
+        newNode->next = *head;
+    }
+    (*size)++;
+}
+
+// Function to remove the m-th node and return its value
+int removeAndReturn(struct Node** head, int m, struct Node** current, int* size) {
+    if (*size == 0) return -1;
+    if (*size == 1) {
+        int value = (*head)->data;
+        free(*head);
+        *head = nullptr;
+        *current = nullptr;
+        *size = 0;
         return value;
     }
     
-    // Get the head node
-    Node* getHead() const {
-        return head;
+    // Move to the node before the one to be deleted
+    // We need to move (m-1) steps from current
+    for (int i = 1; i < m; i++) {
+        *current = (*current)->next;
     }
     
-    // Get the size of the list
-    int getSize() const {
-        return size;
+    // Now current points to the node to be deleted
+    struct Node* toDelete = *current;
+    struct Node* prev = *current;
+    
+    // Find the previous node
+    while (prev->next != toDelete) {
+        prev = prev->next;
     }
     
-    // Check if list is empty
-    bool isEmpty() const {
-        return size == 0;
+    // Remove the node
+    prev->next = toDelete->next;
+    
+    // Update head if we're deleting it
+    if (toDelete == *head) {
+        *head = toDelete->next;
     }
-};
+    
+    // Set current to the next node after the deleted one
+    *current = toDelete->next;
+    
+    int value = toDelete->data;
+    free(toDelete);
+    (*size)--;
+    
+    return value;
+}
 
 int main() {
     int n, m;
-    std::cin >> n >> m;
+    scanf("%d %d", &n, &m);
+    
+    struct Node* head = nullptr;
+    int size = 0;
     
     // Create circular linked list with n elements (1 to n)
-    CircularLinkedList list;
     for (int i = 1; i <= n; i++) {
-        list.insert(i);
+        insert(&head, i, &size);
     }
     
-    Node* current = list.getHead();
+    struct Node* current = head;
     
     // Simulate Josephus ring elimination
-    while (!list.isEmpty()) {
-        int removed = list.removeAndReturn(m, current);
-        std::cout << removed << std::endl;
+    while (size > 0) {
+        int removed = removeAndReturn(&head, m, &current, &size);
+        printf("%d\n", removed);
         
         // If list is not empty, current should point to the next node
         // If current is null (which happens when we delete the last node),
