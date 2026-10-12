@@ -1,38 +1,28 @@
-#include <iostream>
-using namespace std;
+#include <cstdio>
+#include <cstdlib>
 
 struct Node {
     int data;
     Node* next;
-    
-    Node(int val) {
-        data = val;
-        next = NULL;
-    }
 };
 
 int main() {
     int n, m;
-    cin >> n >> m;
+    scanf("%d%d", &n, &m);
     
-    // Create circular linked list
-    Node* head = NULL;
-    Node* tail = NULL;
+    Node* nodes = (Node*)malloc(n * sizeof(Node));
     
-    for (int i = 1; i <= n; i++) {
-        Node* newNode = new Node(i);
-        if (head == NULL) {
-            head = newNode;
-            tail = newNode;
-            newNode->next = head; // Make it circular
+    // Initialize nodes
+    for (int i = 0; i < n; i++) {
+        nodes[i].data = i + 1;
+        if (i == n - 1) {
+            nodes[i].next = &nodes[0];  // Last node points to first (circular)
         } else {
-            tail->next = newNode;
-            newNode->next = head;
-            tail = newNode;
+            nodes[i].next = &nodes[i + 1];
         }
     }
     
-    Node* current = head;
+    Node* current = &nodes[0];
     int remaining = n;
     
     while (remaining > 0) {
@@ -41,34 +31,28 @@ int main() {
             current = current->next;
         }
         
-        // Now current points to the node to be deleted
-        Node* toDelete = current;
-        
         // Find the previous node
         Node* prev = current;
-        while (prev->next != toDelete) {
+        while (prev->next != current) {
             prev = prev->next;
         }
         
+        // Output the value to be deleted
+        printf("%d\n", current->data);
+        
         // Remove the node
-        prev->next = toDelete->next;
+        prev->next = current->next;
         
-        // Update head if we're deleting it
-        if (toDelete == head) {
-            head = toDelete->next;
-        }
+        // Move to next node
+        Node* toDelete = current;
+        current = current->next;
         
-        // Update tail if we're deleting it
-        if (toDelete == tail) {
-            tail = prev;
-        }
-        
-        // Set current to the next node after the deleted one
-        current = toDelete->next;
-        
-        cout << toDelete->data << endl;
-        delete toDelete;
         remaining--;
+        
+        // If this was the last node, free memory
+        if (remaining == 0) {
+            free(nodes);
+        }
     }
     
     return 0;
