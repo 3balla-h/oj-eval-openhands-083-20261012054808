@@ -4,8 +4,6 @@
 struct Node {
     int data;
     Node* next;
-    
-    Node(int val) : data(val), next(nullptr) {}
 };
 
 class CircularLinkedList {
@@ -32,7 +30,9 @@ public:
     
     // Insert a new node at the end of the list
     void insert(int value) {
-        Node* newNode = new Node(value);
+        Node* newNode = new Node;
+        newNode->data = value;
+        newNode->next = nullptr;
         
         if (head == nullptr) {
             head = newNode;
