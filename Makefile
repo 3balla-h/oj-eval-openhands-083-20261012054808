@@ -1,12 +1,12 @@
-CXX = g++
-CXXFLAGS = -std=c++11 -Wall -Wextra -O2
+CC = gcc
+CFLAGS = -std=c99 -Wall -Wextra -O2
 TARGET = code
-SOURCE = main.cpp
+SOURCE = main.c
 
 all: $(TARGET)
 
 $(TARGET): $(SOURCE)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SOURCE)
+	$(CC) $(CFLAGS) -o $(TARGET) $(SOURCE)
 
 clean:
 	rm -f $(TARGET)

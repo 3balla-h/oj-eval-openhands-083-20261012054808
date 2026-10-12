@@ -1,5 +1,5 @@
-#include <cstdio>
-#include <cstdlib>
+#include <stdio.h>
+#include <stdlib.h>
 
 // Node structure for singly circular linked list
 struct Node {
@@ -11,7 +11,7 @@ struct Node {
 struct Node* createNode(int value) {
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
     newNode->data = value;
-    newNode->next = nullptr;
+    newNode->next = NULL;
     return newNode;
 }
 
@@ -19,7 +19,7 @@ struct Node* createNode(int value) {
 void insert(struct Node** head, int value, int* size) {
     struct Node* newNode = createNode(value);
     
-    if (*head == nullptr) {
+    if (*head == NULL) {
         *head = newNode;
         newNode->next = *head; // Point to itself to make it circular
     } else {
@@ -40,8 +40,8 @@ int removeAndReturn(struct Node** head, int m, struct Node** current, int* size)
     if (*size == 1) {
         int value = (*head)->data;
         free(*head);
-        *head = nullptr;
-        *current = nullptr;
+        *head = NULL;
+        *current = NULL;
         *size = 0;
         return value;
     }
@@ -83,7 +83,7 @@ int main() {
     int n, m;
     scanf("%d %d", &n, &m);
     
-    struct Node* head = nullptr;
+    struct Node* head = NULL;
     int size = 0;
     
     // Create circular linked list with n elements (1 to n)
