@@ -1,5 +1,5 @@
-#include <cstdio>
-#include <cstdlib>
+#include <iostream>
+using namespace std;
 
 struct Node {
     int data;
@@ -8,51 +8,40 @@ struct Node {
 
 int main() {
     int n, m;
-    scanf("%d%d", &n, &m);
+    cin >> n >> m;
     
-    Node* nodes = (Node*)malloc(n * sizeof(Node));
+    Node* head = 0;
+    Node* prev = 0;
     
-    // Initialize nodes
-    for (int i = 0; i < n; i++) {
-        nodes[i].data = i + 1;
-        if (i == n - 1) {
-            nodes[i].next = &nodes[0];  // Last node points to first (circular)
+    for (int i = 1; i <= n; i++) {
+        Node* node = new Node;
+        node->data = i;
+        if (head == 0) {
+            head = node;
         } else {
-            nodes[i].next = &nodes[i + 1];
+            prev->next = node;
         }
+        prev = node;
     }
     
-    Node* current = &nodes[0];
-    int remaining = n;
+    prev->next = head;
     
-    while (remaining > 0) {
-        // Move (m-1) steps to find the node to delete
+    Node* current = head;
+    int count = n;
+    
+    while (count > 0) {
         for (int i = 1; i < m; i++) {
+            prev = current;
             current = current->next;
         }
         
-        // Find the previous node
-        Node* prev = current;
-        while (prev->next != current) {
-            prev = prev->next;
-        }
+        cout << current->data << endl;
         
-        // Output the value to be deleted
-        printf("%d\n", current->data);
-        
-        // Remove the node
         prev->next = current->next;
-        
-        // Move to next node
-        Node* toDelete = current;
+        Node* temp = current;
         current = current->next;
-        
-        remaining--;
-        
-        // If this was the last node, free memory
-        if (remaining == 0) {
-            free(nodes);
-        }
+        delete temp;
+        count--;
     }
     
     return 0;
